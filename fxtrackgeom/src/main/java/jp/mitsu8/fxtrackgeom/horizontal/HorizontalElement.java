@@ -8,7 +8,9 @@ import javafx.scene.shape.PathElement;
 
 public interface HorizontalElement {
 	
-	Point2D point(double length);
+	Point2D point(double t);
+	
+	Point2D tangentVector(double t);
 	
 	ObservableList<PathElement> getPath();
 	

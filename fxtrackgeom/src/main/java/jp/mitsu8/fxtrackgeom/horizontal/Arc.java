@@ -25,11 +25,26 @@ public class Arc extends HorizontalElementBase {
 	
 	private ObservableList<PathElement> path;
 	
+	public Arc() {
+	}
+	
+	public Arc(double radius, double length) {
+		setRadius(radius);
+		setLength(length);
+	}
+	
 	@Override
-	public Point2D point(double length) {
-		double x = getRadius() * (-cos(length / getRadius() + getEdgeA().getDirection()) + cos(getEdgeA().getDirection()));
-		double y = getRadius() * ( sin(length / getRadius() + getEdgeA().getDirection()) - sin(getEdgeA().getDirection()));
+	public Point2D point(double t) {
+		double x = getRadius() * (-cos(getLength() * t / getRadius() + getEdgeA().getDirection()) + cos(getEdgeA().getDirection()));
+		double y = getRadius() * ( sin(getLength() * t / getRadius() + getEdgeA().getDirection()) - sin(getEdgeA().getDirection()));
 		return new Point2D(x, y);
+	}
+
+	@Override
+	public Point2D tangentVector(double t) {
+		return new Point2D(
+				cos(getLength() * t / getRadius() + getEdgeA().getDirection()),
+				sin(getLength() * t / getRadius() + getEdgeA().getDirection()));
 	}
 
 	@Override

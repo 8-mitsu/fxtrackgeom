@@ -30,10 +30,17 @@ public class Line extends HorizontalElementBase {
 	}
 	
 	@Override
-	public Point2D point(double length) {
+	public Point2D point(double t) {
 		return new Point2D(
-				Math.cos(getEdgeA().getDirection()) * length + getEdgeA().getX(),
-				Math.sin(getEdgeA().getDirection()) * length + getEdgeA().getY());
+				Math.cos(getEdgeA().getDirection()) * getLength() * t + getEdgeA().getX(),
+				Math.sin(getEdgeA().getDirection()) * getLength() * t + getEdgeA().getY());
+	}
+
+	@Override
+	public Point2D tangentVector(double t) {
+		return new Point2D(
+				Math.cos(getEdgeA().getDirection()) * getLength(),
+				Math.sin(getEdgeA().getDirection()) * getLength());
 	}
 
 	@Override
