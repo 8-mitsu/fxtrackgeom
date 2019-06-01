@@ -51,9 +51,29 @@
     </MenuBar>
     <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <TreeView />
-            <Pane />
-        <AnchorPane />
+            <TabPane>
+               <tabs>
+                  <Tab text="Layout">
+                     <content>
+                        <TreeView VBox.vgrow="ALWAYS" />
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+            <TabPane>
+               <tabs>
+                  <Tab text="Horizontal View">
+                     <content>
+                        <Pane />
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+            <ScrollPane hbarPolicy="NEVER" prefViewportHeight="549.0" prefViewportWidth="220.0">
+               <content>
+                  <VBox />
+               </content>
+            </ScrollPane>
       </items>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
