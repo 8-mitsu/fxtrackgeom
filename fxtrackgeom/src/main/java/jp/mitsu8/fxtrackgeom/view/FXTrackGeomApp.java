@@ -1,4 +1,4 @@
-package jp.mitsu8.fxtrackgeom;
+package jp.mitsu8.fxtrackgeom.view;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
