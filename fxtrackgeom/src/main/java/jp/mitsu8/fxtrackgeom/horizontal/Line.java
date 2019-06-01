@@ -42,6 +42,11 @@ public class Line extends HorizontalElementBase {
 				Math.cos(getEdgeA().getDirection()) * getLength(),
 				Math.sin(getEdgeA().getDirection()) * getLength());
 	}
+	
+	@Override
+	public double arcLength(double t) {
+		return getLength() * t;
+	}
 
 	@Override
 	public ObservableList<PathElement> getPath() {

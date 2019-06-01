@@ -46,6 +46,11 @@ public class Arc extends HorizontalElementBase {
 				cos(getLength() * t / getRadius() + getEdgeA().getDirection()),
 				sin(getLength() * t / getRadius() + getEdgeA().getDirection()));
 	}
+	
+	@Override
+	public double arcLength(double t) {
+		return getLength() * t;
+	}
 
 	@Override
 	public ObservableList<PathElement> getPath() {

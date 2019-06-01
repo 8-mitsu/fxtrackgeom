@@ -19,6 +19,10 @@ public final class OrientedPoint {
 		this(point.getX(), point.getY(), direction);
 	}
 	
+	public OrientedPoint(Point2D point, Point2D direction) {
+		this(point.getX(), point.getY(), Math.atan2(direction.getY(), direction.getX()));
+	}
+	
 	public final double getX() {
 		return x;
 	}

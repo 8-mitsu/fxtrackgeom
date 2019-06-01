@@ -12,6 +12,8 @@ public interface HorizontalElement {
 	
 	Point2D tangentVector(double t);
 	
+	double arcLength(double t);
+	
 	ObservableList<PathElement> getPath();
 	
 	Edge getEdgeA();
@@ -45,12 +47,6 @@ public interface HorizontalElement {
 		
 		HorizontalElement getHorizontalElement();
 		
-	}
-	
-	enum EdgeOrder {
-		EDGE1_TO_EDGE2,
-		EDGE2_TO_EDGE1,
-		DISCONNECTED
 	}
 	
 	static void connectCurves(Edge prev, Edge next) {

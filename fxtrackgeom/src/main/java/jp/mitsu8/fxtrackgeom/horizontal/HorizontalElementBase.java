@@ -10,50 +10,51 @@ import jp.mitsu8.fxtrackgeom.util.VoidCallback;
 
 public abstract class HorizontalElementBase implements HorizontalElement {
 	
-	private boolean edgeInitialized = false;
 	private Edge edgeA;
 	private Edge edgeB;
 	private boolean edgeUpdating = false; // lock for edge
 	
-	private void initEdge() {
-		edgeA = new EdgeImpl(this);
-		edgeB = new EdgeImpl(this);
-		ChangeListener<OrientedPoint> bidirectionalBinding = (observable, oldValue, newValue) -> {
-			if (!isEdgeUpdating()) {
-				updateEdge(() -> {
-					double rotateAngle = newValue.getDirection() - oldValue.getDirection();
-					Translate translate = new Translate(newValue.getX() - oldValue.getX(), newValue.getY() - oldValue.getY());
-					Rotate rotate = new Rotate(rotateAngle * 180 / Math.PI, newValue.getX(), newValue.getY());
-					
-					if (observable == edgeA)
-						edgeB.setPoint(new OrientedPoint(
-								rotate.transform(translate.transform(edgeB.getX(), edgeB.getY())),
-								edgeB.getDirection() + rotateAngle));
-					if (observable == edgeB)
-						edgeA.setPoint(new OrientedPoint(
-								rotate.transform(translate.transform(edgeA.getX(), edgeA.getY())),
-								edgeA.getDirection() + rotateAngle));
-				});
-			}
-		};
-		edgeA.pointProperty().addListener(bidirectionalBinding);
-		edgeB.pointProperty().addListener(bidirectionalBinding);
-		
-		edgeInitialized = true;
+	ChangeListener<OrientedPoint> autoTranslation = (observable, oldValue, newValue) -> {
+		if (!isEdgeUpdating()) {
+			updateEdge(() -> {
+				double rotateAngle = newValue.getDirection() - oldValue.getDirection();
+				Translate translate = new Translate(newValue.getX() - oldValue.getX(), newValue.getY() - oldValue.getY());
+				Rotate rotate = new Rotate(rotateAngle * 180 / Math.PI, newValue.getX(), newValue.getY());
+				
+				if (observable == getEdgeA())
+					getEdgeB().setPoint(new OrientedPoint(
+							rotate.transform(translate.transform(getEdgeB().getX(), getEdgeB().getY())),
+							getEdgeB().getDirection() + rotateAngle));
+				if (observable == getEdgeB())
+					getEdgeA().setPoint(new OrientedPoint(
+							rotate.transform(translate.transform(getEdgeA().getX(), getEdgeA().getY())),
+							getEdgeA().getDirection() + rotateAngle));
+			});
+		}
+	};
+	
+	@Override
+	public final Edge getEdgeA() {
+		return edgeA == null ? edgeA = createEdgeA() : edgeA;
+	}
+	
+	private Edge createEdgeA() {
+		Edge edge = new EdgeImpl(this);
+		edge.setPoint(new OrientedPoint(point(0.0), tangentVector(0.0)));
+		edge.pointProperty().addListener(autoTranslation);
+		return edge;
 	}
 	
 	@Override
-	public Edge getEdgeA() {
-		if (!edgeInitialized)
-			initEdge();
-		return edgeA;
+	public final Edge getEdgeB() {
+		return edgeB == null ? edgeB = createEdgeB() : edgeB;
 	}
 	
-	@Override
-	public Edge getEdgeB() {
-		if (!edgeInitialized)
-			initEdge();
-		return edgeB;
+	private Edge createEdgeB() {
+		Edge edge = new EdgeImpl(this);
+		edge.setPoint(new OrientedPoint(point(1.0), tangentVector(1.0)));
+		edge.pointProperty().addListener(autoTranslation);
+		return edge;
 	}
 	
 	protected boolean isEdgeUpdating() {
@@ -78,6 +79,7 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 		private final HorizontalElement horizontalElement;
 		
 		public EdgeImpl(HorizontalElement element) {
+			if (element == null) throw new NullPointerException("element");
 			horizontalElement = element;
 		}
 		
