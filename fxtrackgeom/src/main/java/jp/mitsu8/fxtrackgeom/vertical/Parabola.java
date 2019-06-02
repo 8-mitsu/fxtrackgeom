@@ -58,7 +58,6 @@ public class Parabola implements VerticalCurve {
 	public final ObservableList<PathElement> getPath() {
 		if (path != null)
 			return path;
-		ObservableList<PathElement> path = FXCollections.observableArrayList();
 		
 		MoveTo move = new MoveTo();
 		move.setAbsolute(true);
@@ -76,9 +75,7 @@ public class Parabola implements VerticalCurve {
 		quad.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getX(), endProperty()));
 		quad.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getY(), endProperty()));
 		
-		path.addAll(move, quad);
-		
-		return FXCollections.unmodifiableObservableList(path);
+		return path = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(move, quad));
 	}
 	
 	

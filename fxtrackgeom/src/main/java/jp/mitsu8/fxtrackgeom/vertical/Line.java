@@ -12,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
-import javafx.scene.shape.QuadCurveTo;
 
 public class Line implements VerticalElement {
 	
@@ -44,7 +43,6 @@ public class Line implements VerticalElement {
 	public final ObservableList<PathElement> getPath() {
 		if (path != null)
 			return path;
-		ObservableList<PathElement> path = FXCollections.observableArrayList();
 		
 		MoveTo move = new MoveTo();
 		move.setAbsolute(true);
@@ -56,9 +54,7 @@ public class Line implements VerticalElement {
 		line.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getX(), endProperty()));
 		line.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getY(), endProperty()));
 		
-		path.addAll(move, line);
-		
-		return FXCollections.unmodifiableObservableList(path);
+		return path = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(move, line));
 	}
 	
 	// Properties
