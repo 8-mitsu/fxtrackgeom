@@ -1,5 +1,6 @@
 package jp.mitsu8.fxtrackgeom.horizontal;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.collections.ObservableList;
@@ -19,6 +20,56 @@ public interface HorizontalElement {
 	Edge getEdgeA();
 	
 	Edge getEdgeB();
+	
+	
+	
+	DoubleProperty x0Property();
+	
+	double getX0();
+	
+	void setX0(double value);
+	
+	
+	
+	DoubleProperty y0Property();
+	
+	double getY0();
+	
+	void setY0(double value);
+	
+	
+	
+	DoubleProperty direction0Property();
+	
+	double getDirection0();
+	
+	void setDirection0(double value);
+	
+	
+	
+	DoubleProperty x1Property();
+	
+	double getX1();
+	
+	void setX1(double value);
+	
+	
+	
+	DoubleProperty y1Property();
+	
+	double getY1();
+	
+	void setY1(double value);
+	
+	
+	
+	DoubleProperty direction1Property();
+	
+	double getDirection1();
+	
+	void setDirection1(double value);
+	
+	
 	
 	ReadOnlyDoubleProperty lengthProperty();
 	
