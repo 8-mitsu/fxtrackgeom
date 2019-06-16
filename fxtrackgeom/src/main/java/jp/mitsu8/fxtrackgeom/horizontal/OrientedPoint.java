@@ -2,6 +2,10 @@ package jp.mitsu8.fxtrackgeom.horizontal;
 
 import javafx.geometry.Point2D;
 
+/**
+ * An object which stores point and direction. 
+ * @author 8-mitsu
+ */
 public final class OrientedPoint {
 	
 	public static final OrientedPoint ZERO = new OrientedPoint(0.0, 0.0, 0.0);

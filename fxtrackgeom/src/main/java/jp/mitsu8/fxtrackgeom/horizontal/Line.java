@@ -1,6 +1,5 @@
 package jp.mitsu8.fxtrackgeom.horizontal;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -21,26 +20,25 @@ public class Line extends HorizontalElementBase {
 	public Line() {
 	}
 	
-	public Line(double x1, double y1, double direction1, double length) {
-		updateEdge(() -> {
-			getEdgeA().setPoint(new OrientedPoint(x1, y1, direction1));
-			setLength(length);
-			getEdgeB().setPoint(new OrientedPoint(point(length), direction1));
-		});
+	public Line(double x0, double y0, double direction0, double length) {
+		setX0(x0);
+		setY0(y0);
+		setDirection0(direction0);
+		setLength(length);
 	}
 	
 	@Override
 	public Point2D point(double t) {
 		return new Point2D(
-				Math.cos(getEdgeA().getDirection()) * getLength() * t + getEdgeA().getX(),
-				Math.sin(getEdgeA().getDirection()) * getLength() * t + getEdgeA().getY());
+				Math.cos(getDirection0()) * getLength() * t + getEdgeA().getX(),
+				Math.sin(getDirection0()) * getLength() * t + getEdgeA().getY());
 	}
 
 	@Override
 	public Point2D tangentVector(double t) {
 		return new Point2D(
-				Math.cos(getEdgeA().getDirection()) * getLength(),
-				Math.sin(getEdgeA().getDirection()) * getLength());
+				Math.cos(getDirection0()) * getLength(),
+				Math.sin(getDirection0()) * getLength());
 	}
 	
 	@Override
@@ -53,20 +51,24 @@ public class Line extends HorizontalElementBase {
 		if (path != null)
 			return path;
 		MoveTo moveTo = new MoveTo();
-		moveTo.xProperty().bind(Bindings.createDoubleBinding(() -> getEdgeA().getX(), getEdgeA().pointProperty()));
-		moveTo.yProperty().bind(Bindings.createDoubleBinding(() -> getEdgeA().getY(), getEdgeA().pointProperty()));
+		moveTo.xProperty().bind(x0Property());
+		moveTo.yProperty().bind(y0Property());
 		
 		LineTo lineTo = new LineTo();
-		lineTo.xProperty().bind(Bindings.createDoubleBinding(() -> getEdgeB().getX(), getEdgeB().pointProperty()));
-		lineTo.yProperty().bind(Bindings.createDoubleBinding(() -> getEdgeB().getY(), getEdgeB().pointProperty()));
+		lineTo.xProperty().bind(x1Property());
+		lineTo.yProperty().bind(y1Property());
 		
 		return path = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(moveTo, lineTo));
 	}
 	
 	
 	
-	private final ChangeListener<Object> propertyChange = (observable, oldValue, newValue) -> updateEdge(
-			() -> getEdgeB().setPoint(new OrientedPoint(point(getLength()), getEdgeB().getDirection())));
+	private final ChangeListener<Number> propertyChange = (observable, oldValue, newValue) -> update(
+			() -> {
+				Point2D p = point(1.0);
+				setX1(p.getX());
+				setY1(p.getY());
+			});
 	
 	
 	
