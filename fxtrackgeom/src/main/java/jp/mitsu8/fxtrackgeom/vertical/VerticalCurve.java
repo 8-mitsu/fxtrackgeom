@@ -1,12 +1,11 @@
 package jp.mitsu8.fxtrackgeom.vertical;
 
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.geometry.Point2D;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 
 public interface VerticalCurve extends VerticalElement {
 	
-	Point2D getGradientChangingPoint();
+	double getGradientChangingPoint();
 
-	ReadOnlyObjectProperty<Point2D> gradientChangingPointProperty();
+	ReadOnlyDoubleProperty gradientChangingPointProperty();
 	
 }

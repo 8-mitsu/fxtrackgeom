@@ -1,53 +1,36 @@
 package jp.mitsu8.fxtrackgeom.vertical;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
 public class Parabola implements VerticalCurve {
 	
-	private ObjectProperty<InclinedPoint> beginning;
-	private static final InclinedPoint defaultBeginning = new InclinedPoint(-10.0, 0.0, 0.0);
+	private DoubleProperty x0, y0, gradient0, x1, y1, gradient1;
+	private static final double defaultX0 = -10.0, defaultY0 = 0.0, defaultGradient0 = 0.0;
+	private static final double defaultX1 =  10.0, defaultY1 = 0.0, defaultGradient1 = 0.0;
 	
-	private ObjectProperty<InclinedPoint> end;
-	private static final InclinedPoint defaultEnd = new InclinedPoint(10.0, 0.0, 0.0);
-	
-	private ObjectProperty<Point2D> gradientChangingPoint;
-	private static final Point2D defaultGradientChangingPoint = new Point2D(0.0, 0.0);
+	private DoubleProperty gradientChangingPoint;
+	private static final double defaultGradientChangingPoint = 0.0;
 	
 	private DoubleProperty length;
 	private static final double defaultLength = 20.0;
 	
 	@Override
 	public double height(double x) {
-		if (getBeginning().getX() == getEnd().getY())
-			return Double.NaN;
-		double x0  = getBeginning().getX();
-		double dy0 = getBeginning().getGradient();
-		double x1  = getEnd()      .getX();
-		double dy1 = getEnd()      .getGradient();
-		return 0.5 * (x-x0) * ((x-x0)*(dy1-dy0) / (x0-x1) + dy0) + getBeginning().getY();
+		double t = x - getX0();
+		return t * (getGradient0() + t * (getGradient1() - getGradient0()) / (2*getLength())) + getY0();
 	}
 	
 	@Override
 	public double gradient(double x) {
-		if (getBeginning().getX() == getEnd().getY())
-			return Double.NaN;
-		double x0  = getBeginning().getX();
-		double dy0 = getBeginning().getGradient();
-		double x1  = getEnd()      .getX();
-		double dy1 = getEnd()      .getGradient();
-		return (dy1 - dy0) / (x0 - x1) * (x - x0) + dy0;
+		return (getGradient1() - getGradient0()) / getLength() * (x - getX0()) + getGradient0();
 	}
 	
 	
@@ -61,19 +44,15 @@ public class Parabola implements VerticalCurve {
 		
 		MoveTo move = new MoveTo();
 		move.setAbsolute(true);
-		move.xProperty().bind(Bindings.createDoubleBinding(() -> getBeginning().getX(), beginningProperty()));
-		move.yProperty().bind(Bindings.createDoubleBinding(() -> getBeginning().getY(), beginningProperty()));
+		move.xProperty().bind(x0Property());
+		move.yProperty().bind(y0Property());
 		
 		QuadCurveTo quad = new QuadCurveTo();
 		quad.setAbsolute(true);
-		quad.controlXProperty().bind(Bindings.createDoubleBinding(
-				() -> (getBeginning().getX() + getEnd().getX()) / 2,
-				beginningProperty(), endProperty()));
-		quad.controlYProperty().bind(Bindings.createDoubleBinding(
-				() -> getBeginning().getY() + getBeginning().getGradient() * (getLength()) / 2, 
-				beginningProperty(), endProperty()));
-		quad.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getX(), endProperty()));
-		quad.xProperty().bind(Bindings.createDoubleBinding(() -> getEnd().getY(), endProperty()));
+		quad.controlXProperty().bind(x0Property().add(x1Property()).divide(2));
+		quad.controlYProperty().bind(y0Property().add( gradient0Property().multiply( lengthProperty().divide(2) ) ));
+		quad.xProperty().bind(x1Property());
+		quad.xProperty().bind(y1Property());
 		
 		return path = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(move, quad));
 	}
@@ -82,32 +61,38 @@ public class Parabola implements VerticalCurve {
 	
 	// Properties
 	
-	private final ChangeListener<Object> listener = new ChangeListener<Object>() {
+	private final ChangeListener<Number> listener = new ChangeListener<Number>() {
 		
 		private boolean updating;
 		
 		@Override
-		public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 			if (!updating) {
 				updating = true;
-				if (observable == beginning) {
-					InclinedPoint nyu = (InclinedPoint) newValue;
-					setGradientChangingPoint(nyu.moveX(getLength() / 2).getPoint());
-					setEnd(new InclinedPoint(getGradientChangingPoint(), getEnd().getGradient()).moveX(getLength() / 2));
-				} else if (observable == end) {
-					InclinedPoint nyu = (InclinedPoint) newValue;
-					setGradientChangingPoint(nyu.moveX(getLength() / -2).getPoint());
-					setBeginning(new InclinedPoint(getGradientChangingPoint(), getBeginning().getGradient()).moveX(getLength() / -2));
+				double oldV = oldValue.doubleValue();
+				double newV = newValue.doubleValue();
+				if (observable == x0) {
+					setGradientChangingPoint(newV + getLength()/2);
+					setX1(newV + getLength());
+				} else if (observable == y0) {
+					setY1(getY1() + (newV - oldV));
+				} else if (observable == gradient0) {
+					setY1(getY1() + (newV - oldV) * getLength()/2);
+				} else if (observable == x1) {
+					setX0(newV - getLength());
+					setGradientChangingPoint(newV - getLength()/2);
+				} else if (observable == y1) {
+					setY0(getY0() + (newV - oldV));
+				} else if (observable == gradient1) {
+					setY0(getY0() - (newV - oldV) * getLength()/2);
 				} else if (observable == gradientChangingPoint) {
-					Point2D old = (Point2D) oldValue;
-					Point2D nyu = (Point2D) newValue;
-					Point2D dp = nyu.subtract(old);
-					setBeginning(getBeginning().add(dp));
-					setEnd(getEnd().add(dp));
+					setX0(newV - getLength()/2);
+					setX1(newV + getLength()/2);
 				} else if (observable == length) {
-					double dl = (double) newValue - (double) oldValue;
-					setBeginning(getBeginning().moveX(dl / -2));
-					setEnd(getEnd().moveX(dl / 2));
+					setX0(getGradientChangingPoint() - newV/2);
+					setY0(getY0() - getGradient0() * (newV - oldV));
+					setX1(getGradientChangingPoint() + newV/2);
+					setY1(getY1() + getGradient1() * (newV - oldV));
 				}
 				updating = false;
 			}
@@ -118,68 +103,158 @@ public class Parabola implements VerticalCurve {
 	
 	
 	@Override
-	public final ObjectProperty<InclinedPoint> beginningProperty() {
-		return beginning == null ? beginning = createBeginningProperty() : beginning;
+	public DoubleProperty x0Property() {
+		return x0 == null ? x0 = createX0Property() : x0;
 	}
 	
-	private ObjectProperty<InclinedPoint> createBeginningProperty() {
-		ObjectProperty<InclinedPoint> property = new SimpleObjectProperty<>(this, "beginning", defaultBeginning);
+	private DoubleProperty createX0Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "x0", defaultX0);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public final InclinedPoint getBeginning() {
-		return beginning == null ? defaultBeginning : beginning.get();
+	public double getX0() {
+		return x0 == null ? defaultX0 : x0.get();
 	}
 	
 	@Override
-	public final void setBeginning(InclinedPoint value) {
-		beginningProperty().set(value);
+	public void setX0(double value) {
+		x0Property().set(value);
 	}
-	
-	
-	
+
+
 	@Override
-	public final ObjectProperty<InclinedPoint> endProperty() {
-		return end == null ? end = createEndProperty() : end;
+	public DoubleProperty y0Property() {
+		return y0 == null ? y0 = createY0Property() : y0;
 	}
 	
-	private ObjectProperty<InclinedPoint> createEndProperty() {
-		ObjectProperty<InclinedPoint> property = new SimpleObjectProperty<>(this, "end", defaultEnd);
+	private DoubleProperty createY0Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "y0", defaultY0);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public final InclinedPoint getEnd() {
-		return end == null ? defaultEnd : end.get();
+	public double getY0() {
+		return y0 == null ? defaultY0 : y0.get();
 	}
 	
 	@Override
-	public final void setEnd(InclinedPoint value) {
-		endProperty().set(value);
+	public void setY0(double value) {
+		y0Property().set(value);
 	}
 	
 	
 	
 	@Override
-	public final ObjectProperty<Point2D> gradientChangingPointProperty() {
+	public DoubleProperty gradient0Property() {
+		return gradient0 == null ? gradient0 = createGradient0Property() : gradient0;
+	}
+	
+	private DoubleProperty createGradient0Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "gradient0", defaultGradient0);
+		property.addListener(listener);
+		return property;
+	}
+	
+	@Override
+	public double getGradient0() {
+		return gradient0 == null ? defaultGradient0 : gradient0.get();
+	}
+	
+	@Override
+	public void setGradient0(double value) {
+		gradient0Property().set(value);
+	}
+	
+	
+	
+	@Override
+	public DoubleProperty x1Property() {
+		return x1 == null ? x1 = createX1Property() : x1;
+	}
+	
+	private DoubleProperty createX1Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "x1", defaultX1);
+		property.addListener(listener);
+		return property;
+	}
+	
+	@Override
+	public double getX1() {
+		return x1 == null ? defaultX1 : x1.get();
+	}
+	
+	@Override
+	public void setX1(double value) {
+		x1Property().set(value);
+	}
+
+
+	@Override
+	public DoubleProperty y1Property() {
+		return y1 == null ? y1 = createY1Property() : y1;
+	}
+	
+	private DoubleProperty createY1Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "y1", defaultY1);
+		property.addListener(listener);
+		return property;
+	}
+	
+	@Override
+	public double getY1() {
+		return y1 == null ? defaultY1 : y1.get();
+	}
+	
+	@Override
+	public void setY1(double value) {
+		y1Property().set(value);
+	}
+	
+	
+	
+	@Override
+	public DoubleProperty gradient1Property() {
+		return gradient1 == null ? gradient1 = createGradient1Property() : gradient1;
+	}
+	
+	private DoubleProperty createGradient1Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "gradient1", defaultGradient1);
+		property.addListener(listener);
+		return property;
+	}
+	
+	@Override
+	public double getGradient1() {
+		return gradient1 == null ? defaultGradient1 : gradient1.get();
+	}
+	
+	@Override
+	public void setGradient1(double value) {
+		gradient1Property().set(value);
+	}
+	
+	
+	
+	@Override
+	public final DoubleProperty gradientChangingPointProperty() {
 		return gradientChangingPoint == null ? gradientChangingPoint = createGradientChangingPointProperty() : gradientChangingPoint;
 	}
 	
-	private ObjectProperty<Point2D> createGradientChangingPointProperty() {
-		ObjectProperty<Point2D> property = new SimpleObjectProperty<>(this, "gradientChangingPoint", defaultGradientChangingPoint);
+	private DoubleProperty createGradientChangingPointProperty() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "gradientChangingPoint", defaultGradientChangingPoint);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public final Point2D getGradientChangingPoint() {
+	public double getGradientChangingPoint() {
 		return gradientChangingPoint == null ? defaultGradientChangingPoint : gradientChangingPoint.get();
 	}
 	
-	public final void setGradientChangingPoint(Point2D value) {
+	public void setGradientChangingPoint(double value) {
 		gradientChangingPointProperty().set(value);
 	}
 	

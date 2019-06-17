@@ -1,7 +1,6 @@
 package jp.mitsu8.fxtrackgeom.vertical;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.shape.PathElement;
 
@@ -17,19 +16,51 @@ public interface VerticalElement {
 	
 	
 	
-	ObjectProperty<InclinedPoint> beginningProperty();
+	DoubleProperty x0Property();
 	
-	InclinedPoint getBeginning();
+	double getX0();
 	
-	void setBeginning(InclinedPoint value);
+	void setX0(double value);
 	
 	
 	
-	ObjectProperty<InclinedPoint> endProperty();
+	DoubleProperty y0Property();
 	
-	InclinedPoint getEnd();
+	double getY0();
 	
-	void setEnd(InclinedPoint value);
+	void setY0(double value);
+	
+	
+	
+	DoubleProperty gradient0Property();
+	
+	double getGradient0();
+	
+	void setGradient0(double value);
+	
+	
+	
+	DoubleProperty x1Property();
+	
+	double getX1();
+	
+	void setX1(double value);
+	
+	
+	
+	DoubleProperty y1Property();
+	
+	double getY1();
+	
+	void setY1(double value);
+	
+	
+	
+	DoubleProperty gradient1Property();
+	
+	double getGradient1();
+	
+	void setGradient1(double value);
 	
 	
 	
