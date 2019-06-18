@@ -17,10 +17,6 @@ public interface HorizontalElement {
 	
 	ObservableList<PathElement> getPath();
 	
-	Edge getEdgeA();
-	
-	Edge getEdgeB();
-	
 	
 	
 	DoubleProperty x0Property();
@@ -74,38 +70,5 @@ public interface HorizontalElement {
 	ReadOnlyDoubleProperty lengthProperty();
 	
 	double getLength();
-	
-	
-	interface Edge {
-		
-		ObjectProperty<OrientedPoint> pointProperty();
-		
-		OrientedPoint getPoint();
-		
-		void setPoint(OrientedPoint value);
-		
-		default double getX() {
-			return getPoint().getX();
-		}
-		
-		default double getY() {
-			return getPoint().getY();
-		}
-		
-		default double getDirection() {
-			return getPoint().getDirection();
-		}
-		
-		HorizontalElement getHorizontalElement();
-		
-	}
-	
-	static void connectCurves(Edge prev, Edge next) {
-		prev.pointProperty().bindBidirectional(next.pointProperty());
-	}
-	
-	static void disconnectCurves(Edge prev, Edge next) {
-		prev.pointProperty().unbindBidirectional(next.pointProperty());
-	}
 	
 }

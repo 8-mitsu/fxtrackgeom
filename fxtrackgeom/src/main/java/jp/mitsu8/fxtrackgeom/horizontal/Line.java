@@ -30,8 +30,8 @@ public class Line extends HorizontalElementBase {
 	@Override
 	public Point2D point(double t) {
 		return new Point2D(
-				Math.cos(getDirection0()) * getLength() * t + getEdgeA().getX(),
-				Math.sin(getDirection0()) * getLength() * t + getEdgeA().getY());
+				Math.cos(getDirection0()) * getLength() * t + getX0(),
+				Math.sin(getDirection0()) * getLength() * t + getY0());
 	}
 
 	@Override

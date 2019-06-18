@@ -4,44 +4,19 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
-
 import jp.mitsu8.fxtrackgeom.util.VoidCallback;
 
 public abstract class HorizontalElementBase implements HorizontalElement {
 	
-	private Edge edgeA;
-	private Edge edgeB;
 	private boolean updating = false; // lock for edge
 	
 	protected DoubleProperty x0, y0, direction0, x1, y1, direction1;
 	
-	ChangeListener<OrientedPoint> autoTranslation = (observable, oldValue, newValue) -> {
-		if (!isUpdating()) {
-			update(() -> {
-				double rotateAngle = newValue.getDirection() - oldValue.getDirection();
-				Translate translate = new Translate(newValue.getX() - oldValue.getX(), newValue.getY() - oldValue.getY());
-				Rotate rotate = new Rotate(rotateAngle * 180 / Math.PI, newValue.getX(), newValue.getY());
-				
-				if (observable == getEdgeA())
-					getEdgeB().setPoint(new OrientedPoint(
-							rotate.transform(translate.transform(getEdgeB().getX(), getEdgeB().getY())),
-							getEdgeB().getDirection() + rotateAngle));
-				if (observable == getEdgeB())
-					getEdgeA().setPoint(new OrientedPoint(
-							rotate.transform(translate.transform(getEdgeA().getX(), getEdgeA().getY())),
-							getEdgeA().getDirection() + rotateAngle));
-			});
-		}
-	};
-	
 	private ChangeListener<Number> listener = (observable, oldValue, newValue) -> update(() -> {
 		if (observable == null) return;
+		if (updating) return;
 		double diff = newValue.doubleValue() - oldValue.doubleValue();
 		if (observable == x0)
 			setX1(getX1() + diff);
@@ -72,30 +47,6 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 			setY0(q + y1);
 		}
 	});
-	
-	@Override
-	public final Edge getEdgeA() {
-		return edgeA == null ? edgeA = createEdgeA() : edgeA;
-	}
-	
-	private Edge createEdgeA() {
-		Edge edge = new EdgeImpl(this);
-		edge.setPoint(new OrientedPoint(point(0.0), tangentVector(0.0)));
-		edge.pointProperty().addListener(autoTranslation);
-		return edge;
-	}
-	
-	@Override
-	public final Edge getEdgeB() {
-		return edgeB == null ? edgeB = createEdgeB() : edgeB;
-	}
-	
-	private Edge createEdgeB() {
-		Edge edge = new EdgeImpl(this);
-		edge.setPoint(new OrientedPoint(point(1.0), tangentVector(1.0)));
-		edge.pointProperty().addListener(autoTranslation);
-		return edge;
-	}
 	
 	/**
 	 * The lock for properties.
@@ -262,41 +213,6 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 	@Override
 	public void setDirection1(double value) {
 		direction1Property().set(value);
-	}
-	
-	
-	
-	protected static class EdgeImpl implements Edge {
-		
-		private final ObjectProperty<OrientedPoint> point = new SimpleObjectProperty<>(this, "point", OrientedPoint.ZERO);
-		
-		private final HorizontalElement horizontalElement;
-		
-		public EdgeImpl(HorizontalElement element) {
-			if (element == null) throw new NullPointerException("element");
-			horizontalElement = element;
-		}
-		
-		@Override
-		public final ObjectProperty<OrientedPoint> pointProperty() {
-			return point;
-		}
-		
-		@Override
-		public OrientedPoint getPoint() {
-			return pointProperty().get();
-		}
-		
-		@Override
-		public void setPoint(OrientedPoint value) {
-			pointProperty().set(value);
-		}
-		
-		@Override
-		public HorizontalElement getHorizontalElement() {
-			return horizontalElement;
-		}
-		
 	}
 	
 }
