@@ -2,31 +2,44 @@ package jp.mitsu8.fxtrackgeom.horizontal;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
-import javafx.scene.shape.PathElement;
 import javafx.util.Pair;
+import jp.mitsu8.fxtrackgeom.vertical.VerticalLayout;
 
 public class HorizontalLayout {
 
 
-	public enum ElementOrientation {
+	public static enum ElementOrientation {
 		FORWARD,
 		BACKWARD
 	}
+	
+	
 
 	private ObservableList<Pair<HorizontalElement, ElementOrientation>> elements;
 	
 	public ObservableList<Pair<HorizontalElement, ElementOrientation>> getElements() {
 		return elements == null ? elements = new ObservableElementList() : elements;
 	}
-
-	private ObservableList<PathElement> path;
 	
 	
-	public ObservableList<PathElement> getPath() {
-		return path;
-//		return path == null ? path = new ObservablePath(getElements()) : path;
+	
+	private ObjectProperty<VerticalLayout> verticalLayout;
+	
+	public ObjectProperty<VerticalLayout> verticalLayoutProperty() {
+		return verticalLayout == null ? verticalLayout = new SimpleObjectProperty<>() : verticalLayout;
+	}
+	
+	public VerticalLayout getVerticalLayout() {
+		return verticalLayoutProperty().get();
+	}
+	
+	public void setVerticalLayout(VerticalLayout value) {
+		verticalLayoutProperty().set(value);
 	}
 	
 	
