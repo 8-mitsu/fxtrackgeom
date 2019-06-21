@@ -44,7 +44,7 @@ public class HorizontalElementConnection implements ChangeListener<Number>, Weak
 	
 	private final boolean opposite;
 	
-	public HorizontalElementConnection(
+	HorizontalElementConnection(
 			DoubleProperty xA, DoubleProperty yA, DoubleProperty directionA,
 			DoubleProperty xB, DoubleProperty yB, DoubleProperty directionB, boolean opposite) {
 		this.xA = new WeakReference<>(xA);
