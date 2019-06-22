@@ -6,7 +6,7 @@ import java.util.List;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
 
-public class VerticalLayout {
+public class Profile {
 
 	private ObservableList<VerticalElement> elements;
 
@@ -14,25 +14,38 @@ public class VerticalLayout {
 		return elements == null ? elements = new VerticalElementList() : elements;
 	}
 	
-	public double height(double x) {
-		VerticalElement element = getVerticalElementAt(x);
+	public double height(double l) {
+		VerticalElement element = getVerticalElementAt(l);
 		if (element != null)
-			return element.height(x);
-		else {
-			double x0 = getElements().get(getElements().size()-1).getX1();
-			double y0 = getElements().get(getElements().size()-1).getY1();
-			double a0 = getElements().get(getElements().size()-1).getGradient1();
-			return a0 * (x - x0) + y0;
+			return element.height(l);
+		else if (!getElements().isEmpty()){
+			VerticalElement last = getElements().get(getElements().size()-1);
+			if (last != null) {
+				double l0 = last.getL1();
+				double h0 = last.getH1();
+				double a0 = last.getGradient1();
+				return a0 * (l - l0) + h0;
+			}
 		}
+		return 0.0;
 	}
 	
-	public double gradient(double x) {
-		return x;
+	public double gradient(double l) {
+		VerticalElement element = getVerticalElementAt(l);
+		if (element != null)
+			return element.gradient(l);
+		else if (!getElements().isEmpty()){
+			VerticalElement last = getElements().get(getElements().size()-1);
+			if (last != null) {
+				return last.getGradient1();
+			}
+		}
+		return 0.0;
 	}
 	
-	public VerticalElement getVerticalElementAt(double x) {
+	public VerticalElement getVerticalElementAt(double l) {
 		for (VerticalElement element : getElements()) {
-			if (element.getX0() <= x && x <= element.getX1())
+			if (element.getL0() <= l && l < element.getL1())
 				return element;
 		}
 		return null;
@@ -55,24 +68,24 @@ public class VerticalLayout {
 		@Override
 		protected void doAdd(int index, VerticalElement element) {
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().unbindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().unbindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().unbindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().unbindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().unbindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().unbindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().unbindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().unbindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().unbindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().unbindBidirectional(get(index+1).gradient0Property());
 			}
 			delegate.add(index, element);
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().bindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().bindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().bindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().bindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().bindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().bindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().bindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().bindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().bindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().bindBidirectional(get(index+1).gradient0Property());
 			}
 		}
@@ -80,24 +93,24 @@ public class VerticalLayout {
 		@Override
 		protected VerticalElement doSet(int index, VerticalElement element) {
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().unbindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().unbindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().unbindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().unbindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().unbindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().unbindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().unbindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().unbindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().unbindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().unbindBidirectional(get(index+1).gradient0Property());
 			}
 			VerticalElement returned = delegate.set(index, element);
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().bindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().bindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().bindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().bindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().bindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().bindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().bindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().bindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().bindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().bindBidirectional(get(index+1).gradient0Property());
 			}
 			return returned;
@@ -106,24 +119,24 @@ public class VerticalLayout {
 		@Override
 		protected VerticalElement doRemove(int index) {
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().unbindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().unbindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().unbindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().unbindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().unbindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().unbindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().unbindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().unbindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().unbindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().unbindBidirectional(get(index+1).gradient0Property());
 			}
 			VerticalElement returned = delegate.remove(index);
 			if (1 <= index && index < size()) {
-				get(index-1).x1Property().bindBidirectional(get(index).x0Property());
-				get(index-1).y1Property().bindBidirectional(get(index).y0Property());
+				get(index-1).l1Property().bindBidirectional(get(index).l0Property());
+				get(index-1).h1Property().bindBidirectional(get(index).h0Property());
 				get(index-1).gradient1Property().bindBidirectional(get(index).gradient0Property());
 			}
 			if (index + 1 < size()) {
-				get(index).x1Property().bindBidirectional(get(index+1).x0Property());
-				get(index).y1Property().bindBidirectional(get(index+1).y0Property());
+				get(index).l1Property().bindBidirectional(get(index+1).l0Property());
+				get(index).h1Property().bindBidirectional(get(index+1).h0Property());
 				get(index).gradient1Property().bindBidirectional(get(index+1).gradient0Property());
 			}
 			return returned;

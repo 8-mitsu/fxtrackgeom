@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
-import jp.mitsu8.fxtrackgeom.vertical.VerticalLayout;
+import jp.mitsu8.fxtrackgeom.vertical.Profile;
 
 public class HorizontalLayout {
 
@@ -28,17 +28,17 @@ public class HorizontalLayout {
 	
 	
 	
-	private ObjectProperty<VerticalLayout> verticalLayout;
+	private ObjectProperty<Profile> verticalLayout;
 	
-	public ObjectProperty<VerticalLayout> verticalLayoutProperty() {
+	public ObjectProperty<Profile> verticalLayoutProperty() {
 		return verticalLayout == null ? verticalLayout = new SimpleObjectProperty<>() : verticalLayout;
 	}
 	
-	public VerticalLayout getVerticalLayout() {
+	public Profile getVerticalLayout() {
 		return verticalLayoutProperty().get();
 	}
 	
-	public void setVerticalLayout(VerticalLayout value) {
+	public void setVerticalLayout(Profile value) {
 		verticalLayoutProperty().set(value);
 	}
 	
