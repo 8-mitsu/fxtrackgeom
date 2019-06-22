@@ -12,21 +12,21 @@ import javafx.scene.shape.PathElement;
 
 public class Line implements VerticalElement {
 	
-	private DoubleProperty x0, y0, gradient0, x1, y1, gradient1;
-	private static final double defaultX0 = -10.0, defaultY0 = 0.0, defaultGradient0 = 0.0;
-	private static final double defaultX1 =  10.0, defaultY1 = 0.0, defaultGradient1 = 0.0;
+	private DoubleProperty l0, h0, gradient0, l1, h1, gradient1;
+	private static final double defaultL0 = -10.0, defaultH0 = 0.0, defaultGradient0 = 0.0;
+	private static final double defaultL1 =  10.0, defaultH1 = 0.0, defaultGradient1 = 0.0;
 	
 	private DoubleProperty length;
 	private static final double defaultLength = 20.0;
 	
 	@Override
-	public double height(double x) {
-		return getGradient0() * (x - getX0()) + getY0();
+	public double height(double l) {
+		return getGradient0() * (l - getL0()) + getH0();
 	}
 	
 	
 	@Override
-	public double gradient(double x) {
+	public double gradient(double l) {
 		return getGradient0();
 	}
 	
@@ -41,13 +41,13 @@ public class Line implements VerticalElement {
 		
 		MoveTo move = new MoveTo();
 		move.setAbsolute(true);
-		move.xProperty().bind(x0Property());
-		move.yProperty().bind(y0Property());
+		move.xProperty().bind(l0Property());
+		move.yProperty().bind(h0Property());
 		
 		LineTo line = new LineTo();
 		line.setAbsolute(true);
-		line.xProperty().bind(x1Property());
-		line.xProperty().bind(y1Property());
+		line.xProperty().bind(l1Property());
+		line.xProperty().bind(h1Property());
 		
 		return path = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(move, line));
 	}
@@ -64,14 +64,14 @@ public class Line implements VerticalElement {
 			double newV = newValue.doubleValue();
 			if (!updating) {
 				updating = true;
-				if (observable == x0) {
-					setY1(getY1() - getGradient1() * (newV - oldV));
-				} else if (observable == y0) {
-					setY1(getY1() + (newV - oldV));
-				} else if (observable == x1) {
-					setY0(getY0() + getGradient0() * (newV - oldV));
-				} else if (observable == y1) {
-					setY0(getY0() + (newV - oldV));
+				if (observable == l0) {
+					setH1(getH1() - getGradient1() * (newV - oldV));
+				} else if (observable == h0) {
+					setH1(getH1() + (newV - oldV));
+				} else if (observable == l1) {
+					setH0(getH0() + getGradient0() * (newV - oldV));
+				} else if (observable == h1) {
+					setH0(getH0() + (newV - oldV));
 				}
 				updating = false;
 			}
@@ -82,46 +82,47 @@ public class Line implements VerticalElement {
 	
 	
 	@Override
-	public DoubleProperty x0Property() {
-		return x0 == null ? x0 = createX0Property() : x0;
+	public DoubleProperty l0Property() {
+		return l0 == null ? l0 = createL0Property() : l0;
 	}
 	
-	private DoubleProperty createX0Property() {
-		DoubleProperty property = new SimpleDoubleProperty(this, "x0", defaultX0);
+	private DoubleProperty createL0Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "l0", defaultL0);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public double getX0() {
-		return x0 == null ? defaultX0 : x0.get();
+	public double getL0() {
+		return l0 == null ? defaultL0 : l0.get();
 	}
 	
 	@Override
-	public void setX0(double value) {
-		x0Property().set(value);
-	}
-
-
-	@Override
-	public DoubleProperty y0Property() {
-		return y0 == null ? y0 = createY0Property() : y0;
+	public void setL0(double value) {
+		l0Property().set(value);
 	}
 	
-	private DoubleProperty createY0Property() {
-		DoubleProperty property = new SimpleDoubleProperty(this, "y0", defaultY0);
+	
+	
+	@Override
+	public DoubleProperty h0Property() {
+		return h0 == null ? h0 = createH0Property() : h0;
+	}
+	
+	private DoubleProperty createH0Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "h0", defaultH0);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public double getY0() {
-		return y0 == null ? defaultY0 : y0.get();
+	public double getH0() {
+		return h0 == null ? defaultH0 : h0.get();
 	}
 	
 	@Override
-	public void setY0(double value) {
-		y0Property().set(value);
+	public void setH0(double value) {
+		h0Property().set(value);
 	}
 	
 	
@@ -150,46 +151,46 @@ public class Line implements VerticalElement {
 	
 	
 	@Override
-	public DoubleProperty x1Property() {
-		return x1 == null ? x1 = createX1Property() : x1;
+	public DoubleProperty l1Property() {
+		return l1 == null ? l1 = createL1Property() : l1;
 	}
 	
-	private DoubleProperty createX1Property() {
-		DoubleProperty property = new SimpleDoubleProperty(this, "x1", defaultX1);
+	private DoubleProperty createL1Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "l1", defaultL1);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public double getX1() {
-		return x1 == null ? defaultX1 : x1.get();
+	public double getL1() {
+		return l1 == null ? defaultL1 : l1.get();
 	}
 	
 	@Override
-	public void setX1(double value) {
-		x1Property().set(value);
+	public void setL1(double value) {
+		l1Property().set(value);
 	}
 
 
 	@Override
-	public DoubleProperty y1Property() {
-		return y1 == null ? y1 = createY1Property() : y1;
+	public DoubleProperty h1Property() {
+		return h1 == null ? h1 = createH1Property() : h1;
 	}
 	
-	private DoubleProperty createY1Property() {
-		DoubleProperty property = new SimpleDoubleProperty(this, "y1", defaultY1);
+	private DoubleProperty createH1Property() {
+		DoubleProperty property = new SimpleDoubleProperty(this, "h1", defaultH1);
 		property.addListener(listener);
 		return property;
 	}
 	
 	@Override
-	public double getY1() {
-		return y1 == null ? defaultY1 : y1.get();
+	public double getH1() {
+		return h1 == null ? defaultH1 : h1.get();
 	}
 	
 	@Override
-	public void setY1(double value) {
-		y1Property().set(value);
+	public void setH1(double value) {
+		h1Property().set(value);
 	}
 	
 	
@@ -237,13 +238,6 @@ public class Line implements VerticalElement {
 	public void setLength(double value) {
 		lengthProperty().set(value);
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

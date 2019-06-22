@@ -6,13 +6,14 @@ import static java.lang.Math.sin;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
+
 import jp.mitsu8.fxtrackgeom.util.VoidCallback;
 
 public abstract class HorizontalElementBase implements HorizontalElement {
 	
-	private boolean updating = false; // lock for edge
-	
 	protected DoubleProperty x0, y0, direction0, x1, y1, direction1;
+	
+	private boolean updating = false; // lock for edge
 	
 	private ChangeListener<Number> listener = (observable, oldValue, newValue) -> update(() -> {
 		if (observable == null) return;

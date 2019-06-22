@@ -6,9 +6,9 @@ import javafx.scene.shape.PathElement;
 
 public interface VerticalElement {
 	
-	double gradient(double x);
+	double gradient(double l);
 	
-	double height(double x);
+	double height(double l);
 	
 	
 	
@@ -16,19 +16,19 @@ public interface VerticalElement {
 	
 	
 	
-	DoubleProperty x0Property();
+	DoubleProperty l0Property();
 	
-	double getX0();
+	double getL0();
 	
-	void setX0(double value);
+	void setL0(double value);
 	
 	
 	
-	DoubleProperty y0Property();
+	DoubleProperty h0Property();
 	
-	double getY0();
+	double getH0();
 	
-	void setY0(double value);
+	void setH0(double value);
 	
 	
 	
@@ -40,19 +40,19 @@ public interface VerticalElement {
 	
 	
 	
-	DoubleProperty x1Property();
+	DoubleProperty l1Property();
 	
-	double getX1();
+	double getL1();
 	
-	void setX1(double value);
+	void setL1(double value);
 	
 	
 	
-	DoubleProperty y1Property();
+	DoubleProperty h1Property();
 	
-	double getY1();
+	double getH1();
 	
-	void setY1(double value);
+	void setH1(double value);
 	
 	
 	
