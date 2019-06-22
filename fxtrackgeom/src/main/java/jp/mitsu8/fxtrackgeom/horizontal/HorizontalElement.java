@@ -1,10 +1,14 @@
 package jp.mitsu8.fxtrackgeom.horizontal;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.PathElement;
+
+import jp.mitsu8.fxtrackgeom.vertical.Profile;
 
 public interface HorizontalElement {
 	
@@ -15,6 +19,14 @@ public interface HorizontalElement {
 	double arcLength(double t);
 	
 	ObservableList<PathElement> getPath();
+	
+	
+	
+	StringProperty nameProperty();
+	
+	String getName();
+	
+	void setName(String value);
 	
 	
 	
@@ -69,5 +81,13 @@ public interface HorizontalElement {
 	ReadOnlyDoubleProperty lengthProperty();
 	
 	double getLength();
+	
+	
+	
+	ObjectProperty<Profile> profileProperty();
+	
+	Profile getProfile();
+	
+	void setProfile(Profile value);
 	
 }

@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
+
 import jp.mitsu8.fxtrackgeom.vertical.Profile;
 
 public class HorizontalLayout {

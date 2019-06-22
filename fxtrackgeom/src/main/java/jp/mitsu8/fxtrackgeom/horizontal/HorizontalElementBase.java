@@ -4,14 +4,21 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 
 import jp.mitsu8.fxtrackgeom.util.VoidCallback;
+import jp.mitsu8.fxtrackgeom.vertical.Profile;
 
 public abstract class HorizontalElementBase implements HorizontalElement {
 	
+	private StringProperty name;
 	protected DoubleProperty x0, y0, direction0, x1, y1, direction1;
+	private ObjectProperty<Profile> profile;
 	
 	private boolean updating = false; // lock for edge
 	
@@ -76,6 +83,23 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 		setUpdating(true);
 		callback.call();
 		setUpdating(false);
+	}
+	
+	
+	
+	@Override
+	public StringProperty nameProperty() {
+		return name == null ? name = new SimpleStringProperty(this, "name", "") : name;
+	}
+	
+	@Override
+	public String getName() {
+		return name == null ? "" : name.get();
+	}
+	
+	@Override
+	public void setName(String value) {
+		nameProperty().set(value);
 	}
 	
 	
@@ -215,5 +239,24 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 	public void setDirection1(double value) {
 		direction1Property().set(value);
 	}
+	
+	
+	
+	@Override
+	public ObjectProperty<Profile> profileProperty() {
+		return profile == null ? profile = new SimpleObjectProperty<>(this, "profile", new Profile()) : profile;
+	}
+	
+	@Override
+	public Profile getProfile() {
+		return profileProperty().get();
+	}
+	
+	@Override
+	public void setProfile(Profile value) {
+		profileProperty().set(value);
+	}
+	
+	
 	
 }

@@ -3,22 +3,30 @@ package jp.mitsu8.fxtrackgeom.horizontal;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.PathElement;
 
+import jp.mitsu8.fxtrackgeom.vertical.Profile;
+
 public class Group implements HorizontalElement {
 	
 	private ObservableList<HorizontalElement> elements;
 	
 	private ObservableList<PathElement> path;
+	private StringProperty name;
 	private DoubleProperty x0, y0, direction0, x1, y1, direction1;
 	private ReadOnlyDoubleWrapper length;
+	private ObjectProperty<Profile> profile;
 	
 	private HorizontalElement first;
 	private HorizontalElement last;
@@ -142,6 +150,23 @@ public class Group implements HorizontalElement {
 			});
 		}
 		return elements;
+	}
+	
+	
+	
+	@Override
+	public StringProperty nameProperty() {
+		return name == null ? name = new SimpleStringProperty(this, "name", "") : name;
+	}
+
+	@Override
+	public String getName() {
+		return name == null ? "" : name.get();
+	}
+
+	@Override
+	public void setName(String value) {
+		nameProperty().set(value);
 	}
 	
 	
@@ -321,5 +346,24 @@ public class Group implements HorizontalElement {
 	public double getLength() {
 		return length == null ? 0.0 : length.get();
 	}
+	
+	
+	
+	@Override
+	public ObjectProperty<Profile> profileProperty() {
+		return profile == null ? profile = new SimpleObjectProperty<>(this, "profile", new Profile()) : profile;
+	}
+	
+	@Override
+	public Profile getProfile() {
+		return profileProperty().get();
+	}
+	
+	@Override
+	public void setProfile(Profile value) {
+		profileProperty().set(value);
+	}
+	
+	
 	
 }
