@@ -13,25 +13,34 @@ import jp.mitsu8.fxtrackgeom.horizontal.HorizontalElement;
 
 public class HorizontalView extends Pane {
 	
-	private final ObservableList<HorizontalElement> elements = FXCollections.observableArrayList();
+	private ObservableList<HorizontalElement> elements;
+	
+	
 	
 	public final ObservableList<HorizontalElement> getElements() {
-		return elements;
-	}
-	
-	{
-		final Map<HorizontalElement, Path> paths = new HashMap<>();
-		getElements().addListener((ListChangeListener.Change<? extends HorizontalElement> c) -> {
-			while (c.next()) {
-				for (HorizontalElement el : c.getRemoved())
-					getChildren().remove(paths.remove(el));
-				for (HorizontalElement el : c.getAddedSubList()) {
-					Path path = new Path();
-					Bindings.bindContent(path.getElements(), el.getPath());
-					getChildren().add(paths.put(el, path));
+		if (elements == null) {
+			elements = FXCollections.observableArrayList();
+			elements.addListener(new ListChangeListener<HorizontalElement>() {
+				
+				private final Map<HorizontalElement, Path> paths = new HashMap<>();
+				
+				@Override
+				public void onChanged(Change<? extends HorizontalElement> c) {
+					while (c.next()) {
+						for (HorizontalElement el : c.getRemoved())
+							getChildren().remove(paths.remove(el));
+						for (HorizontalElement el : c.getAddedSubList()) {
+							Path path = new Path();
+							Bindings.bindContent(path.getElements(), el.getPath());
+							path.idProperty().bindBidirectional(el.nameProperty());
+							getChildren().add(paths.put(el, path));
+						}
+					}
 				}
-			}
-		});
+				
+			});
+		}
+		return elements;
 	}
 	
 }

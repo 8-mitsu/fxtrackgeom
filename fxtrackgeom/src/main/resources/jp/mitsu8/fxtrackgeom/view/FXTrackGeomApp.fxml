@@ -55,7 +55,7 @@
                <tabs>
                   <Tab text="Layout">
                      <content>
-                        <TreeView VBox.vgrow="ALWAYS" />
+                        <TreeView editable="true" VBox.vgrow="ALWAYS" />
                      </content>
                   </Tab>
                </tabs>
