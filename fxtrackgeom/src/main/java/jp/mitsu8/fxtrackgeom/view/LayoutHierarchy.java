@@ -1,37 +1,47 @@
 package jp.mitsu8.fxtrackgeom.view;
 
+import java.util.function.Function;
+
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+<<<<<<< Upstream, based on origin/view
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
+=======
+>>>>>>> 1d8aeca [Add] util.Util.mapBidirectional
 
 import jp.mitsu8.fxtrackgeom.Layout;
 import jp.mitsu8.fxtrackgeom.horizontal.Group;
 import jp.mitsu8.fxtrackgeom.horizontal.HorizontalElement;
+import jp.mitsu8.fxtrackgeom.util.Util;
 
-public class LayoutHierarchy extends VBox {
+public class LayoutHierarchy {
 	
+<<<<<<< Upstream, based on origin/view
 	private TreeView<HorizontalElement> treeView;
+=======
+>>>>>>> 1d8aeca [Add] util.Util.mapBidirectional
 	private ObjectProperty<Layout> layout;
 	
-	public LayoutHierarchy() {
-		treeView = new TreeView<>();
-	}
+	@FXML
+	private TreeView<Object> treeView;
 	
 	
 	
 	public final ObjectProperty<Layout> layoutProperty() {
 		if (layout == null) {
 			layout = new SimpleObjectProperty<>(this, "layout");
+			
 			layout.addListener((observable, oldValue, newValue) -> {
+<<<<<<< Upstream, based on origin/view
 				if (newValue == null)
 					treeView.setRoot(null);
 				else {
@@ -39,7 +49,32 @@ public class LayoutHierarchy extends VBox {
 					
 					createHierarchy(newValue.getElements(), root);
 					
+=======
+				class Extractor implements Function<Object, TreeItem<Object>> {
+					@Override
+					public TreeItem<Object> apply(Object t) {
+						if (t == null)
+							return null;
+						TreeItem<Object> node = new TreeItem<>(t);
+						if (t instanceof Group) {
+							Bindings.bindContentBidirectional(node.getChildren(),
+									Util.mapBidirectional(
+											((Group) t).getElements(),
+											this, i -> (HorizontalElement) i.getValue()));
+						}
+						if (t instanceof Layout) {
+							Bindings.bindContentBidirectional(node.getChildren(),
+									Util.mapBidirectional(
+											((Layout) t).getElements(),
+											this, i -> (HorizontalElement) i.getValue()));
+						}
+						return node;
+					}
+>>>>>>> 1d8aeca [Add] util.Util.mapBidirectional
 				}
+				
+				treeView.setRoot(new Extractor().apply(newValue));
+				
 			});
 		}
 		return layout;
