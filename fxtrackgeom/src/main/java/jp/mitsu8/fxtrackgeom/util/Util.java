@@ -1,8 +1,11 @@
 package jp.mitsu8.fxtrackgeom.util;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -65,6 +68,16 @@ public final class Util {
 		target.addListener(listener);
 		
 		return target;
+	}
+	
+	private static Callable<Number> calcSum(ObservableList<? extends Number> list) {
+		
+		return null;
+	}
+	
+	public static DoubleBinding sum(ObservableList<Double> list) {
+		
+		return null;
 	}
 	
 }
