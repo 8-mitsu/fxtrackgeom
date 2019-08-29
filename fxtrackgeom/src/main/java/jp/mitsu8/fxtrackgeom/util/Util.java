@@ -1,11 +1,13 @@
 package jp.mitsu8.fxtrackgeom.util;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.FloatBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.LongBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -70,14 +72,44 @@ public final class Util {
 		return target;
 	}
 	
-	private static Callable<Number> calcSum(ObservableList<? extends Number> list) {
-		
-		return null;
+	public static DoubleBinding doubleSum(ObservableList<? extends Number> list) {
+		return Bindings.createDoubleBinding(() -> {
+			double sum = 0.0;
+			for (Number item : list)
+				if (item != null)
+					sum += item.doubleValue();
+			return sum;
+		}, list);
 	}
 	
-	public static DoubleBinding sum(ObservableList<Double> list) {
-		
-		return null;
+	public static FloatBinding floatSum(ObservableList<? extends Number> list) {
+		return Bindings.createFloatBinding(() -> {
+			float sum = 0;
+			for (Number item : list)
+				if (item != null)
+					sum += item.floatValue();
+			return sum;
+		}, list);
+	}
+	
+	public static IntegerBinding integerSum(ObservableList<? extends Number> list) {
+		return Bindings.createIntegerBinding(() -> {
+			int sum = 0;
+			for (Number item : list)
+				if (item != null)
+					sum += item.intValue();
+			return sum;
+		}, list);
+	}
+	
+	public static LongBinding longSum(ObservableList<? extends Number> list) {
+		return Bindings.createLongBinding(() -> {
+			long sum = 0L;
+			for (Number item : list)
+				if (item != null)
+					sum += item.longValue();
+			return sum;
+		}, list);
 	}
 	
 }

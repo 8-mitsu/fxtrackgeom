@@ -1,5 +1,7 @@
 package jp.mitsu8.fxtrackgeom.horizontal;
 
+import java.util.UUID;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -19,6 +21,8 @@ public interface HorizontalElement {
 	double arcLength(double t);
 	
 	ObservableList<PathElement> getPath();
+	
+	UUID getUUID();
 	
 	
 	

@@ -2,6 +2,7 @@ package jp.mitsu8.fxtrackgeom.horizontal;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import java.util.UUID;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -19,8 +20,13 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 	private StringProperty name;
 	protected DoubleProperty x0, y0, direction0, x1, y1, direction1;
 	private ObjectProperty<Profile> profile;
+	private final UUID UUID;
 	
 	private boolean updating = false; // lock for edge
+	
+	public HorizontalElementBase() {
+		UUID = java.util.UUID.randomUUID();
+	}
 	
 	private ChangeListener<Number> listener = (observable, oldValue, newValue) -> update(() -> {
 		if (observable == null) return;
@@ -31,6 +37,7 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 		if (observable == y0)
 			setY1(getY1() + diff);
 		if (observable == direction0) {
+			setDirection1(getDirection1() + diff);
 			double x0 = getX0();
 			double y0 = getY0();
 			double x1 = getX1();
@@ -45,6 +52,7 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 		if (observable == y1)
 			setY0(getY0() + diff);
 		if (observable == direction1) {
+			setDirection0(getDirection0() + diff);
 			double x0 = getX0();
 			double y0 = getY0();
 			double x1 = getX1();
@@ -85,7 +93,10 @@ public abstract class HorizontalElementBase implements HorizontalElement {
 		setUpdating(false);
 	}
 	
-	
+	@Override
+	public UUID getUUID() {
+		return UUID;
+	}
 	
 	@Override
 	public StringProperty nameProperty() {

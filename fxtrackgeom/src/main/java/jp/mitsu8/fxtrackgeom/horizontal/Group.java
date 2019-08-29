@@ -1,5 +1,7 @@
 package jp.mitsu8.fxtrackgeom.horizontal;
 
+import java.util.UUID;
+
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.property.DoubleProperty;
@@ -15,7 +17,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.PathElement;
-
+import javafx.util.Pair;
 import jp.mitsu8.fxtrackgeom.vertical.Profile;
 
 public class Group implements HorizontalElement {
@@ -27,43 +29,41 @@ public class Group implements HorizontalElement {
 	private DoubleProperty x0, y0, direction0, x1, y1, direction1;
 	private ReadOnlyDoubleWrapper length;
 	private ObjectProperty<Profile> profile;
+	private final UUID UUID;
 	
 	private HorizontalElement first;
 	private HorizontalElement last;
 	
 	public Group() {
+		UUID = java.util.UUID.randomUUID();
 	}
 	
 	public Group(HorizontalElement... elements) {
+		this();
 		getElements().addAll(elements);
 	}
 
 	@Override
 	public Point2D point(double t) {
-		final int size = getElements().size();
-		if (size <= 0)
+		if (getElements().size() <= 0)
 			return Point2D.ZERO;
-		double i = t*size;
-		if (1.0 <= t)
-			return getElements().get(size-1).point(i-size);
-		return getElements().get((int) i).point(i % 1.0);
+		Pair<Integer, Double> indexparam = getIndexAndParam(t);
+		return getElements().get(indexparam.getKey())
+				.point(indexparam.getValue());
 	}
 
 	@Override
 	public Point2D tangentVector(double t) {
-		final int size = getElements().size();
-		if (size <= 0)
+		if (getElements().size() <= 0)
 			return Point2D.ZERO;
-		double i = t*size;
-		if (1.0 <= t)
-			return getElements().get(size-1).point(i - size);
-		return getElements().get((int) i).tangentVector(i % 1.0);
+		Pair<Integer, Double> indexparam = getIndexAndParam(t);
+		return getElements().get(indexparam.getKey())
+				.tangentVector(indexparam.getValue());
 	}
 
 	@Override
 	public double arcLength(double t) {
-		final int size = getElements().size();
-		if (size <= 0)
+/*		if (size <= 0)
 			return 0.0;
 		double i = t*size;
 		
@@ -78,9 +78,26 @@ public class Group implements HorizontalElement {
 		for (int j = 0; j <= i-1; j++)
 			sum += getElements().get(j).getLength();
 		return sum + getElements().get((int) i).arcLength(i % 1.0);
+		
+*/		if (getElements().size() <= 0)
+			return 0.0;
+		Pair<Integer, Double> indexparam = getIndexAndParam(t);
+		int index = indexparam.getKey();
+		double pt = indexparam.getValue();
+		double sum = 0.0;
+		for (int i = 0; i < index; i++)
+			sum += getElements().get(i).getLength();
+		return sum + getElements().get(index).arcLength(pt);
 	}
 	
-	
+	private Pair<Integer, Double> getIndexAndParam(double t) {
+		final int size = getElements().size();
+		if (size <= 0)
+			return new Pair<>(-1, t);
+		int i = (int) Math.floor(size * t);
+		double p = size*t - i;
+		return new Pair<>(i, p);
+	}
 	
 	@Override
 	public ObservableList<PathElement> getPath() {
@@ -106,6 +123,11 @@ public class Group implements HorizontalElement {
 			};
 		}
 		return FXCollections.unmodifiableObservableList(path);
+	}
+	
+	@Override
+	public UUID getUUID() {
+		return UUID;
 	}
 	
 	public ObservableList<HorizontalElement> getElements() {
